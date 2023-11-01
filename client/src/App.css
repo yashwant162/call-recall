@@ -1,0 +1,12 @@
+@font-face {
+  /* font-family: sansMedium;
+  src: url('../public/SanFranciscoMedium.ttf'); */
+
+  font-family: sans;
+  src: url('../public/SanFrancisco.ttf');
+
+}
+
+body {
+  font-family: sansMedium, sans-serif; 
+}
