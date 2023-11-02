@@ -1,9 +1,8 @@
 const axios = require('axios');
 const fs = require('fs-extra');
-const {headers} = require("../services/assemblyaiClient");
+const assemblyasiHeaders = require("../services/assemblyaiClient");
+const openaiHeaders = require("../services/openai")
 const testApi = (req, res) => {
-  const { formData } = req.body
-  console.log(formData)
   result = {
     "Success": true
   }
@@ -27,7 +26,7 @@ const convertSpeechToText = async (req, res) => {
   const {data} = req.body
   const fileURL = data.fileUrl
   console.log(fileURL)
-
+  const headers = assemblyasiHeaders
   const baseUrl = 'https://api.assemblyai.com/v2'
   const path = fileURL
   const audioData = await fs.readFile(path)
@@ -65,4 +64,26 @@ const convertSpeechToText = async (req, res) => {
 
 } 
 
-module.exports = { testApi, uploadAudio, convertSpeechToText }
+const summarizeText = async (req, res) => {
+  console.log("came here");
+  const {text} = req.body
+  console.log(text);
+
+  const url = "https://api.openai.com/v1/chat/completions"
+  const headers = openaiHeaders
+  const prompt = "Summarize this text first a brief paragarh of what its about then in bulletins \
+                the key takeaways of the speech text. the input is"
+  const data = {
+    "model": "gpt-3.5-turbo",
+    "messages": [{"role": "user", "content": `${prompt} ${text}`}],
+    "temperature": 0.7
+  }
+
+  const response = await axios.post(url, data, {headers})
+  console.log(response.data.choices[0].message.content);
+
+  result = {text : response.data.choices[0].message.content}
+  res.json(result)
+}
+
+module.exports = { testApi, uploadAudio, convertSpeechToText, summarizeText }
