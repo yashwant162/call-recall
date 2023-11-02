@@ -2,12 +2,19 @@ export default function Logo() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="none"
+      fill="url(#gradient)"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-8 h-8"
+      className="w-8 h-8 "
     >
+      <defs>
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="rgb(195, 141, 147)" />
+      <stop offset="20%" stopColor="rgb(255, 255, 255)" />
+      <stop offset="100%" stopColor="rgb(195, 141, 147)" />
+    </linearGradient>
+  </defs>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
