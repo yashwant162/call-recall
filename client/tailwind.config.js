@@ -11,7 +11,8 @@ export default {
         secondary: "#950740",
         ternary: "#4E4E50",
         fourth: "#C38D93",
-        fifth: "#E8A87C"
+        fifth: "#101927",
+        sixth: "bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black"
       }
     },
   },
