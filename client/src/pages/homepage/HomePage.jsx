@@ -14,14 +14,15 @@ import CopyIcon from "../../components/svg/CopyIcon";
 
 export default function HomePage() {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [generatedText, setGeneratedText] = useState("");
+  const [generatedText, setGeneratedText] = useState("hello");
   const [summarizedText, setSummarizedText] = useState("");
   const [isfilePresent, setIsFilePresent] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [text1, setText1] = useState("");
   const [text2, setText2] = useState("");
-  const [language, setLanguage] = useState("English")
+  const [request, setRequest] = useState(null);
+  const [language, setLanguage] = useState("English");
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
   useEffect(() => {
@@ -51,6 +52,7 @@ export default function HomePage() {
       onStop: async (blobUrl) => {
         // console.log(status);
         setGeneratedText("");
+        setSummarizedText("");
         setAudioBlob(blobUrl);
         stopRecording();
         const response = await fetch(blobUrl);
@@ -63,7 +65,7 @@ export default function HomePage() {
         toast.success("File Recorded Successfully");
         setLoading1(true);
         setText1("");
-        fileName.language = language
+        fileName.language = language;
         const text = await getGeneratedText(fileName);
         // console.log("text received", text);
         if (text === null) {
@@ -102,65 +104,78 @@ export default function HomePage() {
   };
 
   const getGeneratedText = async (fileName) => {
+    const request = axios.CancelToken.source();
+    setRequest(request);
+
     try {
       const { data } = await axios.post(
         "http://localhost:5000/api/data/convert-to-text",
-        fileName
+        fileName,
+        { cancelToken: request.token }
       );
       // console.log("received text", data.text);
       return data.text;
     } catch (error) {
-      const errorTitle = error.response.data.title;
-      const errorMessage = error.response.data.message;
-      toast.error(
-        <p>
-          {errorTitle}
-          <br />
-          {errorMessage}
-        </p>
-      );
-      console.error("Text Generation error", error.response);
+      if (axios.isCancel(error)) {
+        console.log("Request canceled:", error.message);
+        setRequest(null);
+      } else {
+        const errorTitle = error.response.data.title;
+        const errorMessage = error.response.data.message;
+        toast.error(
+          <p>
+            {errorTitle}
+            <br />
+            {errorMessage}
+          </p>
+        );
+        console.error("Text Generation error", error.response);
+      }
       return null;
     }
   };
 
-  const onDrop = useCallback(async (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    setSummarizedText("");
-    setSelectedFile(null);
-    if (file) {
-      setSelectedFile(file);
-      setIsFilePresent(true);
-      const formData = new FormData();
-      formData.append("audioFile", file);
+  const onDrop = useCallback(
+    async (acceptedFiles) => {
+      const file = acceptedFiles[0];
+      setGeneratedText("")
+      setSummarizedText("");
+      setSelectedFile(null);
+      if (file) {
+        setSelectedFile(file);
+        setIsFilePresent(true);
+        const formData = new FormData();
+        formData.append("audioFile", file);
 
-      var fileName = await uploadAudio(formData);
-      // console.log(fileName);
-      if (fileName === null) {
-        setSelectedFile(null);
+        var fileName = await uploadAudio(formData);
+        // console.log(fileName);
+        if (fileName === null) {
+          setSelectedFile(null);
+          setIsFilePresent(false);
+          setGeneratedText("");
+          setText1("");
+          return;
+        }
+        // console.log("file name received using dropbox", fileName);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setIsFilePresent(false);
-        setGeneratedText("");
+        setLoading1(true);
         setText1("");
-        return;
-      }
-      // console.log("file name received using dropbox", fileName);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setIsFilePresent(false);
-      setLoading1(true);
-      setText1("");
-      fileName.language = language
-      // console.log("lang",language);
-      const text = await getGeneratedText(fileName);
-      // console.log(text);
-      if (text === null) {
+        fileName.language = language;
+        // console.log("lang",language);
+        const text = await getGeneratedText(fileName);
+        // console.log(text);
+        if (text === null) {
+          setLoading1(false);
+          setSelectedFile(null);
+          return;
+        }
+        setGeneratedText(text);
         setLoading1(false);
-        setSelectedFile(null);
-        return;
       }
-      setGeneratedText(text);
-      setLoading1(false);
-    }
-  }, []);
+    },
+    [language]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -180,29 +195,38 @@ export default function HomePage() {
     }
     setLoading2(true);
 
+    const request = axios.CancelToken.source();
+    setRequest(request);
+
     const sendData = {
       text: generatedText,
     };
     try {
       const { data } = await axios.post(
         "http://localhost:5000/api/data/summarize-text",
-        sendData
+        sendData,
+        { cancelToken: request.token }
       );
       // console.log(data.text);
       setText2("");
       toast.success("Text summarized successfully.");
       setSummarizedText(data.text);
-    } catch (err) {
-      toast.error(
-        <p>
-          Something went wrong.
-          <br />
-          Text could not be summarized. <br />
-          Please Try Again
-        </p>,
-        { position: "bottom-center" }
-      );
-      // console.log(err);
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Request canceled:", error.message);
+        setRequest(null);
+      } else {
+        toast.error(
+          <p>
+            Something went wrong.
+            <br />
+            Text could not be summarized. <br />
+            Please Try Again
+          </p>,
+          { position: "bottom-center" }
+        );
+        // console.log(err);
+      }
     }
     setLoading2(false);
   };
@@ -218,12 +242,19 @@ export default function HomePage() {
   };
 
   const toggleLanguage = () => {
-    if (language === "English"){
-      setLanguage("Hindi")
+    if (language === "English") {
+      setLanguage("Hindi");
     } else {
-      setLanguage("English")
+      setLanguage("English");
     }
-  }
+  };
+
+  const handleCancelRequest = () => {
+    if (request) {
+      request.cancel();
+      toast.info("Request Canceled.");
+    }
+  };
 
   return (
     <div className="h-full mb-4 mt-4 w-full">
@@ -332,7 +363,15 @@ export default function HomePage() {
             title="Transcribed text will come here"
           >
             {loading1 ? (
-              <LoadingDots />
+              <div className="flex flex-col items-center justify-center h-full gap-4">
+                <LoadingDots />
+                <div
+                  onClick={handleCancelRequest}
+                  className="text-md font-semibold cursor-pointer text-gray-500 hover:text-gray-300 gap-2"
+                >
+                  Cancel Request
+                </div>
+              </div>
             ) : (
               <textarea
                 className="w-full h-full tracking-wider text-white font-semibold text-opacity-75 p-2 resize-none focus:outline-none placeholder:tracking-wider placeholder:text-white placeholder:text-opacity-30 placeholder:font-semibold cursor-default bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))]"
@@ -352,7 +391,9 @@ export default function HomePage() {
                 className={` rounded-full text-md px-4 py-4 text-center inline-flex hover:border-gray-300 
                  font-semibold text-gray-300  items-center border border-gray-600`}
               >
-                <p className="w-3 h-3 inline-flex items-center justify-center">{language === "English" ? "En" : "ह"}</p> 
+                <p className="w-3 h-3 inline-flex items-center justify-center">
+                  {language === "English" ? "En" : "ह"}
+                </p>
               </button>
             </div>
             <button
@@ -386,7 +427,15 @@ export default function HomePage() {
             title="Summarized text will come here"
           >
             {loading2 ? (
-              <LoadingDots />
+              <div className="flex flex-col items-center justify-center h-full gap-4">
+                <LoadingDots />
+                <div
+                  onClick={handleCancelRequest}
+                  className="text-md font-semibold cursor-pointer text-gray-500 hover:text-gray-300 gap-2"
+                >
+                  Cancel Request
+                </div>
+              </div>
             ) : (
               <textarea
                 className="w-full h-full tracking-wider text-white font-semibold text-opacity-75 p-2 resize-none focus:outline-none placeholder:tracking-wider placeholder:text-white placeholder:text-opacity-30 placeholder:font-semibold cursor-default bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))]"
