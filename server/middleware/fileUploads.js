@@ -12,7 +12,6 @@ const defineDestination = (req, file, cb) => {
 const generateFileName = (req, file, cb) => {
   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
   let ext = path.extname(file.originalname);
-  console.log("ext 162",ext);
   if (ext === '.wav') {
     ext = '.mp4'
   }

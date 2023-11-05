@@ -20,38 +20,43 @@ const uploadAudio = async (req, res) => {
     ];
     const result = spawnSync(ffmpegPath, args);
     if (result.error) {
-      console.error('Error:', result.error);
+      // console.error('Error:', result.error);
+      return {error: result.error}
     } else {
-      console.log('stdout:', result.stdout.toString());
-      console.error('stderr:', result.stderr.toString());
-      console.log('Exit code:', result.status);
+      // console.log('stdout:', result.stdout.toString());
+      // console.error('stderr:', result.stderr.toString());
+      // console.log('Exit code:', result.status);
+      return null
     }
   }
 
   const validExtensions = ['mp3', 'wav', 'ogg', 'flac', 'aac', 'mp4'];
 
-  console.log(req.body.formData);
+  // console.log(req.body.formData);
   const uploadedFile = req.file;
 
   if (uploadedFile) {
     var fileUrl = uploadedFile.path;
-    console.log('File stored at:', fileUrl);
+    // console.log('File stored at:', fileUrl);
 
     // convert to .wav
     let parts = fileUrl.split('.');
-    console.log("ext here", parts[parts.length - 1]);
+    // console.log("ext here", parts[parts.length - 1]);
     if (!validExtensions.includes(`${parts[parts.length - 1].toLowerCase()}`)) {
-      console.log("here");
+      // console.log("here");
       res.status(400)
       throw new Error("This is not a valid audio file extension")
     }
     parts[parts.length - 1] = 'wav';
     let newFileUrl = parts.join('.');
-    convertToWav(fileUrl, newFileUrl)
-    console.log("converted");
+    const converted = convertToWav(fileUrl, newFileUrl)
+    if (converted !== null) {
+      res.status(405).json({ success: false, message: 'File could not be converted.' });
+    }
+    // console.log("converted");
     fileUrl = newFileUrl
-    console.log("send data",fileUrl);
-    res.json({ success: true, fileUrl : fileUrl });
+    // console.log("send data", fileUrl);
+    res.json({ success: true, fileUrl: fileUrl });
   } else {
     res.status(400).json({ success: false, message: 'No file uploaded' });
   }
@@ -59,10 +64,11 @@ const uploadAudio = async (req, res) => {
 
 const convertSpeechToText = async (req, res) => {
   const data = req.body
-  console.log("data received", data)
+  // console.log("data received", data)
   const fileURL = data.fileUrl
-  console.log(fileURL)
-
+  const lang = data.language
+  // console.log(fileURL)
+  // console.log("lang ", lang)
   const client = new speech.SpeechClient();
 
   const file = await fs.readFile(fileURL)
@@ -75,7 +81,7 @@ const convertSpeechToText = async (req, res) => {
   const config = {
     encoding: 'LINEAR16',
     sampleRateHertz: 44100,
-    languageCode: 'en-US',
+    languageCode: lang === "English" ? 'en-US' : 'hi-IN',
   };
 
   const request = {
@@ -92,10 +98,10 @@ const convertSpeechToText = async (req, res) => {
         reject(err);
       });
   });
-  console.log("Response: ", finalText);
+  // console.log("Response: ", finalText);
   const transcription = finalText[0].results.map(r => r.alternatives[0].transcript).join("\n")
-  console.log(`Transcription: ${transcription}`);
-  if(transcription === ""){
+  // console.log(`Transcription: ${transcription}`);
+  if (transcription === "") {
     res.status(405)
     throw new Error("The Transcription received from Google was Empty. Please Try Again")
   }
@@ -104,9 +110,9 @@ const convertSpeechToText = async (req, res) => {
 }
 
 const summarizeText = async (req, res) => {
-  console.log("came here");
+  // console.log("came here");
   const { text } = req.body
-  console.log(text);
+  // console.log(text);
 
   const url = "https://api.openai.com/v1/chat/completions"
   const headers = openaiHeaders
@@ -120,21 +126,21 @@ const summarizeText = async (req, res) => {
 
   const response = await axios.post(url, data, { headers })
   const summary = response.data.choices[0].message.content
-  console.log("summary: ",summary);
-  if(summary === ""){
+  // console.log("summary: ", summary);
+  if (summary === "") {
     res.status(405)
     throw new Error("The Summary Received from ChatGPT was Empty. Please Try Again")
   }
 
-  result = { text: summary}
+  result = { text: summary }
   res.json(result)
 }
 
 const convertSpeechToTextUsingAssemblyAI = async (req, res) => {
   const data = req.body
-  console.log("data received", data)
+  // console.log("data received", data)
   const fileURL = data.fileUrl
-  console.log(fileURL)
+  // console.log(fileURL)
   const headers = assemblyasiHeaders
   const baseUrl = 'https://api.assemblyai.com/v2'
   const path = fileURL
@@ -159,7 +165,7 @@ const convertSpeechToTextUsingAssemblyAI = async (req, res) => {
     const transcriptionResult = pollingResponse.data
 
     if (transcriptionResult.status === 'completed') {
-      console.log(transcriptionResult.text)
+      // console.log(transcriptionResult.text)
       var finalText = transcriptionResult.text
       break
     } else if (transcriptionResult.status === 'error') {
