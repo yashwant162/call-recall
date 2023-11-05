@@ -77,7 +77,7 @@ export default function useHomePage() {
   const uploadAudio = async (formData) => {
     try {
       var { data } = await axios.post(
-        "http://localhost:5000/api/data/upload-audio",
+        "/api/data/upload-audio",
         formData
       );
       // console.log("File uploaded successfully", data.fileUrl);
@@ -103,7 +103,7 @@ export default function useHomePage() {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/data/convert-to-text",
+        "/api/data/convert-to-text",
         fileName,
         { cancelToken: request.token }
       );
@@ -197,7 +197,7 @@ export default function useHomePage() {
     };
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/data/summarize-text",
+        "/api/data/summarize-text",
         sendData,
         { cancelToken: request.token }
       );
@@ -238,8 +238,10 @@ export default function useHomePage() {
   const toggleLanguage = () => {
     if (language === "English") {
       setLanguage("Hindi");
+      toast.info("Language is set to Hindi")
     } else {
       setLanguage("English");
+      toast.info("Language is set to English",)
     }
   };
 

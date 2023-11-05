@@ -9,7 +9,9 @@ export default function CopyIcon({textToCopy}) {
       if (textToCopy !== ""){
         await navigator.clipboard.writeText(textToCopy);
         toast.info("Text Copied to clipboard.",{autoClose:500})
-      } 
+      } else {
+        toast.error("Nothing to Copy")
+      }
   } catch (err) {
       console.error(
           "Unable to copy to clipboard.",

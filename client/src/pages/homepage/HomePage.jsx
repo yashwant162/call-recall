@@ -36,7 +36,7 @@ export default function HomePage() {
         position="top-right"
         autoClose={1000}
         hideProgressBar={false}
-        newestOnTop={false}
+        newestOnTop={true}
         closeOnClick
         rtl={false}
         pauseOnFocusLoss
