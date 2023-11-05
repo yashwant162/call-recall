@@ -2,6 +2,8 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { useDropzone } from "react-dropzone";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import UploadLogo from "../../components/svg/UploadLogo";
 import LoadingSpinner from "../../components/svg/LoadingSpinner";
@@ -22,7 +24,7 @@ export default function HomePage() {
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
   useEffect(() => {
-    let currentIndex = text1.length;
+    let currentIndex = text1 ? text1.length : 0;
     if (!loading1 && currentIndex < generatedText.length) {
       const timer = setTimeout(() => {
         setText1(generatedText.slice(0, currentIndex + 1));
@@ -33,7 +35,7 @@ export default function HomePage() {
   }, [text1, generatedText, loading1]);
 
   useEffect(() => {
-    let currentIndex = text2.length;
+    let currentIndex = text2 ? text2.length : 0;
     if (!loading2 && currentIndex < summarizedText.length) {
       const timer = setTimeout(() => {
         setText2(summarizedText.slice(0, currentIndex + 1));
@@ -57,6 +59,7 @@ export default function HomePage() {
         console.log("sending audio");
         const fileName = await uploadAudio(formData);
         console.log("using record", fileName);
+        toast.success("File Recorded Successfully");
         setLoading1(true);
         setText1("");
         const text = await getGeneratedText(fileName);
@@ -65,6 +68,7 @@ export default function HomePage() {
           console.log("text === null");
           setLoading1(false);
           setSelectedFile(null);
+          setAudioBlob(null)
           return;
         }
         setGeneratedText(text);
@@ -81,7 +85,10 @@ export default function HomePage() {
       console.log("File uploaded successfully", data.fileUrl);
       return data;
     } catch (error) {
-      console.error("File upload error", error);
+      const errorTitle = error.response.data.title
+      const errorMessage = error.response.data.message
+      toast.error(<p>{errorTitle}<br/>{errorMessage}</p>)
+      console.error("File upload error", error.response);
       return null;
     }
   };
@@ -94,8 +101,11 @@ export default function HomePage() {
       );
       console.log("received text", data.text);
       return data.text;
-    } catch (err) {
-      console.log(`Text could not be generated ${err}`);
+    } catch (error) {
+      const errorTitle = error.response.data.title
+      const errorMessage = error.response.data.message
+      toast.error(<p>{errorTitle}<br/>{errorMessage}</p>)
+      console.error("Text Generation error", error.response);
       return null;
     }
   };
@@ -111,9 +121,12 @@ export default function HomePage() {
       formData.append("audioFile", file);
 
       var fileName = await uploadAudio(formData);
+      console.log(fileName);
       if (fileName === null) {
         setSelectedFile(null);
         setIsFilePresent(false);
+        setGeneratedText("")
+        setText1("")
         return;
       }
       console.log("file name received using dropbox", fileName);
@@ -161,8 +174,10 @@ export default function HomePage() {
       );
       console.log(data.text);
       setText2("");
+      toast.success("Text summarized successfully.");
       setSummarizedText(data.text);
     } catch (err) {
+      toast.error(<p>Something went wrong.<br/>Text could not be summarized. <br />Please Try Again</p>,{position: "bottom-center"});
       console.log(err);
     }
     setLoading2(false);
@@ -180,9 +195,10 @@ export default function HomePage() {
 
   return (
     <div className="h-full mb-4 mt-4 w-full">
+      <ToastContainer position="top-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="dark" />
       <div className="flex flex-col lg:mb-4">
         <div className="flex flex-row justify-center items-center lg:gap-6 md:gap-4 sm:gap-2 mb-4 lg:pl-20 lg:pr-20">
-          <div
+          <div title="Drop or upload audio files here"
             {...getRootProps()}
             className="flex flex-col items-center justify-center lg:w-96 lg:h-32 border-2 border-gray-600 border-dashed
               rounded-lg cursor-pointer bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black transition duration-300 ease-in-out
@@ -247,14 +263,11 @@ export default function HomePage() {
             OR
           </div>
           <div className="flex flex-row items-center tracking-wider lg:w-96 lg:h-32 lg:gap-5 text-red-400">
-            <button
+            <button title="Click to record your own audio"
               onClick={toggleRecording}
-              className={` text-red-500 border border-fourth hover:bg-red-600 hover:text-white 
-                 font-medium rounded-full text-sm px-6 py-6 text-center inline-flex 
-                 items-center ${
-                   isRecording &&
-                   "border-green-700 hover:bg-green-400 text-green-400"
-                 } `}
+              className={` font-medium rounded-full text-sm px-6 py-6 text-center inline-flex hover:text-white 
+                 items-center ${isRecording ? " border border-green-500 hover:bg-green-700 text-green-400":
+                  "text-red-500 border border-fourth hover:bg-red-600 "} `}
             >
               <MicIcon />
             </button>
@@ -266,18 +279,18 @@ export default function HomePage() {
           </div>
         </div>
         <div className="lg:pl-20 lg:pr-20 lg:flex lg:flex-row lg:items-center lg:justify-between lg:mt-4 sm:flex sm:flex-col sm:justify-center sm:items-center">
-          <div className="relative w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black">
+          <div className="relative w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black" title="Transcribed text will come here">
             {loading1 ? (
               <LoadingDots />
             ) : (
               <textarea
-                className="w-full h-full tracking-wider text-white font-semibold text-opacity-75 p-2 resize-none focus:outline-none placeholder:tracking-wider placeholder:text-white placeholder:text-opacity-30 placeholder:font-semibold bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))]"
+                className="w-full h-full tracking-wider text-white font-semibold text-opacity-75 p-2 resize-none focus:outline-none placeholder:tracking-wider placeholder:text-white placeholder:text-opacity-30 placeholder:font-semibold cursor-default bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))]"
                 placeholder="Speech generated text will come here"
                 readOnly
                 value={text1}
               />
             )}
-            {/* <CopyIcon /> */}
+            <CopyIcon textToCopy={generatedText} />
           </div>
 
           <button
@@ -295,24 +308,25 @@ export default function HomePage() {
                   : "transition-all ease-in duration-75 bg-gray-900 rounded-md group-hover:bg-opacity-0"
               } font-semibold relative px-5 py-2.5 `}
             >
-              <div className="flex flex-row items-center tracking-wider">
+              <div title="Click to generate summary" className="flex flex-row items-center tracking-wider">
                 {loading2 && <LoadingSpinner />}
                 {!loading2 && "Convert"}
               </div>
             </span>
           </button>
 
-          <div className="w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black">
+          <div className="relative w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black" title="Summarized text will come here">
             {loading2 ? (
               <LoadingDots />
             ) : (
               <textarea
-                className="w-full h-full tracking-wider text-white font-semibold text-opacity-75 p-2 resize-none focus:outline-none placeholder:tracking-wider placeholder:text-white placeholder:text-opacity-30 placeholder:font-semibold bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))]"
+                className="w-full h-full tracking-wider text-white font-semibold text-opacity-75 p-2 resize-none focus:outline-none placeholder:tracking-wider placeholder:text-white placeholder:text-opacity-30 placeholder:font-semibold cursor-default bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))]"
                 placeholder="Summarized text will be displayed here"
                 readOnly
                 value={summarizedText}
               />
-            )}
+              )}
+              <CopyIcon textToCopy={summarizedText} />
           </div>
         </div>
       </div>

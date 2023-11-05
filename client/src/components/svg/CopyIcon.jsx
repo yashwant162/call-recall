@@ -1,6 +1,27 @@
-export default function CopyIcon() {
+/* eslint-disable react/prop-types */
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
+export default function CopyIcon({textToCopy}) {
+
+  async function copyToClipBoard() {
+    try {
+      if (textToCopy !== ""){
+        await navigator.clipboard.writeText(textToCopy);
+        toast.info("Text Copied to clipboard.",{autoClose:500})
+      } 
+  } catch (err) {
+      console.error(
+          "Unable to copy to clipboard.",
+          err
+      );
+      toast.info("Unable to copy to clipboard.",{autoClose:500})
+  }
+  }
+
   return (
-    <div className="absolute top-2 right-2 border p-1 rounded-lg bg-gray-800 text-gray-200 cursor-pointer">
+    <div onClick={copyToClipBoard}
+    className=" opacity-20 hover:opacity-100  absolute top-2 right-2 border p-1 rounded-lg bg-gray-800 text-gray-200 cursor-pointer transition duration-300 ease-in-out transform">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
