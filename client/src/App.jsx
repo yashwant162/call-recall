@@ -11,7 +11,7 @@ import HomePage from "./pages/homepage/HomePage";
 axios.defaults.baseURL = "http://localhost:5000";
 axios.defaults.withCredentials = true;
 
-// Define the main App component
+// Define the main App component including Routes.
 function App() {
   return (
       <Routes>
