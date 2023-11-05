@@ -22,9 +22,9 @@ export default function HomePage() {
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
   useEffect(() => {
-        let currentIndex = text1.length;
-        if (!loading1 && currentIndex < generatedText.length) {
-            const timer = setTimeout(() => {
+    let currentIndex = text1.length;
+    if (!loading1 && currentIndex < generatedText.length) {
+      const timer = setTimeout(() => {
         setText1(generatedText.slice(0, currentIndex + 1));
       }, 40);
 
@@ -192,15 +192,26 @@ export default function HomePage() {
               {isfilePresent === false && selectedFile === null && (
                 <div className="flex flex-col items-center justify-center ">
                   <UploadLogo />
-                  <p className="mb-2 text-sm text-gray-500 tracking-wider">
-                    <span className="font-semibold hover:text-fourth tracking-tighter">
-                      Click to upload
-                    </span>{" "}
-                    or drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500 tracking-wider">
-                    MP3, MP4, WAV or AAC
-                  </p>
+                  {audioBlob !== null ? (
+                    <div className="flex flex-col gap-2 justify-center items-center text-gray-500 font-semibold tracking-wider text-md">
+                      <span className="text-sm font-extralight">
+                        (Click to add another file)
+                      </span>
+                      <p>recorded_audio.mp4</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center">
+                      <p className="mb-2 text-sm text-gray-500 tracking-wider">
+                        <span className="font-semibold hover:text-fourth tracking-tighter">
+                          Click to upload
+                        </span>{" "}
+                        or drag and drop
+                      </p>
+                      <p className="text-xs text-gray-500 tracking-wider">
+                        MP3, MP4, WAV or AAC
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
               {isfilePresent === true && selectedFile !== null && (
