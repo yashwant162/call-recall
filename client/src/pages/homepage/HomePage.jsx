@@ -1,9 +1,9 @@
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UploadLogo from "../../components/svg/UploadLogo";
-import LoadingSpinner from "../../components/svg/LoadingSpinner";
-import LoadingDots from "../../components/svg/LoadingDots";
-import Spinner from "../../components/svg/Spinner";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
+import LoadingDots from "../../components/common/LoadingDots";
+import Spinner from "../../components/common/Spinner";
 import MicIcon from "../../components/svg/MicIcon";
 import CopyIcon from "../../components/svg/CopyIcon";
 import useHomePage from "./useHomePage";
@@ -43,7 +43,7 @@ export default function HomePage() {
         draggable
         pauseOnHover
         theme="dark"
-        style={{fontSize: '12px'}}
+        style={{ fontSize: "12px" }}
       />
       <div className="flex flex-col lg:mb-4">
         <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row justify-center items-center lg:gap-6 md:gap-6 sm:gap-4 gap-4 mb-4 lg:pl-20 lg:pr-20">
