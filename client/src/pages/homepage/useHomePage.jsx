@@ -173,7 +173,7 @@ export default function useHomePage() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: "audio/*",
+    accept: {"audio/*":['.mp3', '.wav', '.ogg', '.flac', '.aac', '.mp4']}
   });
 
   const summarizeText = async () => {

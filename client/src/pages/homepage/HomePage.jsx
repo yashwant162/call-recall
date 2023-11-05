@@ -45,7 +45,7 @@ export default function HomePage() {
         theme="dark"
       />
       <div className="flex flex-col lg:mb-4">
-        <div className="flex flex-row justify-center items-center lg:gap-6 md:gap-4 sm:gap-2 mb-4 lg:pl-20 lg:pr-20">
+        <div className="flex flex-row justify-center items-center lg:gap-6 md:gap-6 sm:gap-4 mb-4 lg:pl-20 lg:pr-20">
           <div
             title="Drop or upload audio files here"
             {...getRootProps()}
@@ -72,7 +72,7 @@ export default function HomePage() {
                         </span>{" "}
                         or drag and drop
                       </p>
-                      <p className="text-xs text-gray-500 tracking-wider">
+                      <p className=" text-xs text-gray-500 tracking-wider hidden md:hidden lg:block">
                         MP3, MP4, WAV or AAC
                       </p>
                     </div>
@@ -111,11 +111,11 @@ export default function HomePage() {
           <div className=" inline-flex items-center justify-center text-gray-500 font-semibold tracking-wider text-md lg:w-40 lg:h-32">
             OR
           </div>
-          <div className="flex flex-row items-center tracking-wider lg:w-96 lg:h-32 lg:gap-5 text-red-400">
+          <div className="flex flex-row items-center tracking-wider lg:w-96 lg:h-32 md:w-56 md:h-14 lg:gap-5 md:gap-3 sm:gap-2 text-red-400">
             <button
               title="Click to record your own audio"
               onClick={toggleRecording}
-              className={` font-medium rounded-full text-sm px-6 py-6 text-center inline-flex hover:text-white 
+              className={` font-medium rounded-full text-sm lg:px-6 lg:py-6 md:px-4 md:py-4 px-2 py-2 text-center inline-flex hover:text-white 
                  items-center ${
                    isRecording
                      ? " border border-green-500 hover:bg-green-700 text-green-400"
@@ -131,7 +131,7 @@ export default function HomePage() {
             </span>
           </div>
         </div>
-        <div className="lg:pl-20 lg:pr-20 lg:flex lg:flex-row lg:items-center lg:justify-between lg:mt-4 sm:flex sm:flex-col sm:justify-center sm:items-center">
+        <div className="lg:pl-20 lg:pr-20 md:pl-14 md:pr-14 pl-8 pr-8 flex lg:flex-row md:flew-col lg:items-center lg:justify-between lg:mt-4 sm:flex sm:flex-col sm:justify-center sm:items-center">
           <div
             className="relative w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black"
             title="Transcribed text will come here"
@@ -157,7 +157,7 @@ export default function HomePage() {
             <CopyIcon textToCopy={generatedText} />
           </div>
 
-          <div className="flex flex-col justify-center items-center gap-2 my-2 mx-2">
+          <div className="flex flex-col justify-center items-center lg:gap-8 md:gap-6 sm:gap-6 md:my-6 md:mx-6 sm:my-6">
             <div>
               <button
                 title="Click to toggle the language for which you want to process the audio"
@@ -176,7 +176,7 @@ export default function HomePage() {
                 generatedText
                   ? " group bg-gradient-to-br from-fourth to-white group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white"
                   : "text-gray-700 bg-gray-800"
-              } sm:my-6 relative inline-flex items-center justify-center p-0.5 overflow-hidden text-lg font-medium rounded-lg `}
+              }  relative inline-flex items-center justify-center p-0.5 overflow-hidden text-lg font-medium rounded-lg `}
             >
               <span
                 className={` ${

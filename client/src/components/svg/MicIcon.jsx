@@ -6,7 +6,7 @@ export default function MicIcon() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-8 h-8"
+      className="lg:w-8 lg:h-8 w-6 h-6"
     >
       <path
         strokeLinecap="round"
