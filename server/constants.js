@@ -8,5 +8,6 @@ exports.constants = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
+  WENT_WRONG:405,
   SERVER_ERROR: 500,
 };

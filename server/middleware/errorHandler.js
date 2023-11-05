@@ -11,6 +11,14 @@ const errorHandler = (err, req, res, next) => {
         stackTree: err.stack,
       });
       break;
+    
+    case constants.WENT_WRONG:
+    res.json({
+      title: "Something Went Wrong",
+      message: err.message,
+      stackTree: err.stack,
+    });
+    break;
 
     case constants.NOT_FOUND:
       res.json({

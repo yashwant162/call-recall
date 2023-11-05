@@ -28,6 +28,8 @@ const uploadAudio = async (req, res) => {
     }
   }
 
+  const validExtensions = ['mp3', 'wav', 'ogg', 'flac', 'aac', 'mp4'];
+
   console.log(req.body.formData);
   const uploadedFile = req.file;
 
@@ -37,12 +39,19 @@ const uploadAudio = async (req, res) => {
 
     // convert to .wav
     let parts = fileUrl.split('.');
+    console.log("ext here", parts[parts.length - 1]);
+    if (!validExtensions.includes(`${parts[parts.length - 1].toLowerCase()}`)) {
+      console.log("here");
+      res.status(400)
+      throw new Error("This is not a valid audio file extension")
+    }
     parts[parts.length - 1] = 'wav';
     let newFileUrl = parts.join('.');
     convertToWav(fileUrl, newFileUrl)
     console.log("converted");
     fileUrl = newFileUrl
-    res.json({ success: true, fileUrl });
+    console.log("send data",fileUrl);
+    res.json({ success: true, fileUrl : fileUrl });
   } else {
     res.status(400).json({ success: false, message: 'No file uploaded' });
   }
@@ -66,7 +75,7 @@ const convertSpeechToText = async (req, res) => {
   const config = {
     encoding: 'LINEAR16',
     sampleRateHertz: 44100,
-    languageCode: 'hi-IN',
+    languageCode: 'en-US',
   };
 
   const request = {
@@ -86,6 +95,10 @@ const convertSpeechToText = async (req, res) => {
   console.log("Response: ", finalText);
   const transcription = finalText[0].results.map(r => r.alternatives[0].transcript).join("\n")
   console.log(`Transcription: ${transcription}`);
+  if(transcription === ""){
+    res.status(405)
+    throw new Error("The Transcription received from Google was Empty. Please Try Again")
+  }
 
   res.json({ text: transcription })
 }
@@ -106,9 +119,14 @@ const summarizeText = async (req, res) => {
   }
 
   const response = await axios.post(url, data, { headers })
-  console.log(response.data.choices[0].message.content);
+  const summary = response.data.choices[0].message.content
+  console.log("summary: ",summary);
+  if(summary === ""){
+    res.status(405)
+    throw new Error("The Summary Received from ChatGPT was Empty. Please Try Again")
+  }
 
-  result = { text: response.data.choices[0].message.content }
+  result = { text: summary}
   res.json(result)
 }
 
