@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { useDropzone } from "react-dropzone";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import UploadLogo from "../../components/svg/UploadLogo";
 import LoadingSpinner from "../../components/svg/LoadingSpinner";
@@ -21,6 +21,7 @@ export default function HomePage() {
   const [isRecording, setIsRecording] = useState(false);
   const [text1, setText1] = useState("");
   const [text2, setText2] = useState("");
+  const [language, setLanguage] = useState("English")
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function HomePage() {
     useReactMediaRecorder({
       audio: true,
       onStop: async (blobUrl) => {
-        console.log(status);
+        // console.log(status);
         setGeneratedText("");
         setAudioBlob(blobUrl);
         stopRecording();
@@ -56,19 +57,20 @@ export default function HomePage() {
         const blob = await response.blob();
         const formData = new FormData();
         formData.append("audioFile", blob, "uploaded_audio.mp4");
-        console.log("sending audio");
+        // console.log("sending audio");
         const fileName = await uploadAudio(formData);
-        console.log("using record", fileName);
+        // console.log("using record", fileName);
         toast.success("File Recorded Successfully");
         setLoading1(true);
         setText1("");
+        fileName.language = language
         const text = await getGeneratedText(fileName);
-        console.log("text received", text);
+        // console.log("text received", text);
         if (text === null) {
-          console.log("text === null");
+          // console.log("text === null");
           setLoading1(false);
           setSelectedFile(null);
-          setAudioBlob(null)
+          setAudioBlob(null);
           return;
         }
         setGeneratedText(text);
@@ -82,12 +84,18 @@ export default function HomePage() {
         "http://localhost:5000/api/data/upload-audio",
         formData
       );
-      console.log("File uploaded successfully", data.fileUrl);
+      // console.log("File uploaded successfully", data.fileUrl);
       return data;
     } catch (error) {
-      const errorTitle = error.response.data.title
-      const errorMessage = error.response.data.message
-      toast.error(<p>{errorTitle}<br/>{errorMessage}</p>)
+      const errorTitle = error.response.data.title;
+      const errorMessage = error.response.data.message;
+      toast.error(
+        <p>
+          {errorTitle}
+          <br />
+          {errorMessage}
+        </p>
+      );
       console.error("File upload error", error.response);
       return null;
     }
@@ -99,12 +107,18 @@ export default function HomePage() {
         "http://localhost:5000/api/data/convert-to-text",
         fileName
       );
-      console.log("received text", data.text);
+      // console.log("received text", data.text);
       return data.text;
     } catch (error) {
-      const errorTitle = error.response.data.title
-      const errorMessage = error.response.data.message
-      toast.error(<p>{errorTitle}<br/>{errorMessage}</p>)
+      const errorTitle = error.response.data.title;
+      const errorMessage = error.response.data.message;
+      toast.error(
+        <p>
+          {errorTitle}
+          <br />
+          {errorMessage}
+        </p>
+      );
       console.error("Text Generation error", error.response);
       return null;
     }
@@ -121,21 +135,23 @@ export default function HomePage() {
       formData.append("audioFile", file);
 
       var fileName = await uploadAudio(formData);
-      console.log(fileName);
+      // console.log(fileName);
       if (fileName === null) {
         setSelectedFile(null);
         setIsFilePresent(false);
-        setGeneratedText("")
-        setText1("")
+        setGeneratedText("");
+        setText1("");
         return;
       }
-      console.log("file name received using dropbox", fileName);
+      // console.log("file name received using dropbox", fileName);
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsFilePresent(false);
       setLoading1(true);
       setText1("");
+      fileName.language = language
+      // console.log("lang",language);
       const text = await getGeneratedText(fileName);
-      console.log(text);
+      // console.log(text);
       if (text === null) {
         setLoading1(false);
         setSelectedFile(null);
@@ -172,13 +188,21 @@ export default function HomePage() {
         "http://localhost:5000/api/data/summarize-text",
         sendData
       );
-      console.log(data.text);
+      // console.log(data.text);
       setText2("");
       toast.success("Text summarized successfully.");
       setSummarizedText(data.text);
     } catch (err) {
-      toast.error(<p>Something went wrong.<br/>Text could not be summarized. <br />Please Try Again</p>,{position: "bottom-center"});
-      console.log(err);
+      toast.error(
+        <p>
+          Something went wrong.
+          <br />
+          Text could not be summarized. <br />
+          Please Try Again
+        </p>,
+        { position: "bottom-center" }
+      );
+      // console.log(err);
     }
     setLoading2(false);
   };
@@ -193,12 +217,32 @@ export default function HomePage() {
     setIsRecording(!isRecording);
   };
 
+  const toggleLanguage = () => {
+    if (language === "English"){
+      setLanguage("Hindi")
+    } else {
+      setLanguage("English")
+    }
+  }
+
   return (
     <div className="h-full mb-4 mt-4 w-full">
-      <ToastContainer position="top-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="dark" />
+      <ToastContainer
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <div className="flex flex-col lg:mb-4">
         <div className="flex flex-row justify-center items-center lg:gap-6 md:gap-4 sm:gap-2 mb-4 lg:pl-20 lg:pr-20">
-          <div title="Drop or upload audio files here"
+          <div
+            title="Drop or upload audio files here"
             {...getRootProps()}
             className="flex flex-col items-center justify-center lg:w-96 lg:h-32 border-2 border-gray-600 border-dashed
               rounded-lg cursor-pointer bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black transition duration-300 ease-in-out
@@ -263,11 +307,15 @@ export default function HomePage() {
             OR
           </div>
           <div className="flex flex-row items-center tracking-wider lg:w-96 lg:h-32 lg:gap-5 text-red-400">
-            <button title="Click to record your own audio"
+            <button
+              title="Click to record your own audio"
               onClick={toggleRecording}
               className={` font-medium rounded-full text-sm px-6 py-6 text-center inline-flex hover:text-white 
-                 items-center ${isRecording ? " border border-green-500 hover:bg-green-700 text-green-400":
-                  "text-red-500 border border-fourth hover:bg-red-600 "} `}
+                 items-center ${
+                   isRecording
+                     ? " border border-green-500 hover:bg-green-700 text-green-400"
+                     : "text-red-500 border border-fourth hover:bg-red-600 "
+                 } `}
             >
               <MicIcon />
             </button>
@@ -279,7 +327,10 @@ export default function HomePage() {
           </div>
         </div>
         <div className="lg:pl-20 lg:pr-20 lg:flex lg:flex-row lg:items-center lg:justify-between lg:mt-4 sm:flex sm:flex-col sm:justify-center sm:items-center">
-          <div className="relative w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black" title="Transcribed text will come here">
+          <div
+            className="relative w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black"
+            title="Transcribed text will come here"
+          >
             {loading1 ? (
               <LoadingDots />
             ) : (
@@ -293,29 +344,47 @@ export default function HomePage() {
             <CopyIcon textToCopy={generatedText} />
           </div>
 
-          <button
-            onClick={generatedText && summarizeText}
-            className={` ${
-              generatedText
-                ? " group bg-gradient-to-br from-fourth to-white group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white"
-                : "text-gray-700 bg-gray-800"
-            } sm:my-6 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-lg font-medium rounded-lg `}
-          >
-            <span
+          <div className="flex flex-col justify-center items-center gap-2 my-2 mx-2">
+            <div>
+              <button
+                title="Click to toggle the language for which you want to process the audio"
+                onClick={toggleLanguage}
+                className={` rounded-full text-md px-4 py-4 text-center inline-flex hover:border-gray-300 
+                 font-semibold text-gray-300  items-center border border-gray-600`}
+              >
+                <p className="w-3 h-3 inline-flex items-center justify-center">{language === "English" ? "En" : "ह"}</p> 
+              </button>
+            </div>
+            <button
+              onClick={generatedText && summarizeText}
               className={` ${
                 generatedText
-                  ? "transition-all ease-in duration-75 bg-gray-900 rounded-md group-hover:bg-opacity-0 hover:text-gray-800 "
-                  : "transition-all ease-in duration-75 bg-gray-900 rounded-md group-hover:bg-opacity-0"
-              } font-semibold relative px-5 py-2.5 `}
+                  ? " group bg-gradient-to-br from-fourth to-white group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white"
+                  : "text-gray-700 bg-gray-800"
+              } sm:my-6 relative inline-flex items-center justify-center p-0.5 overflow-hidden text-lg font-medium rounded-lg `}
             >
-              <div title="Click to generate summary" className="flex flex-row items-center tracking-wider">
-                {loading2 && <LoadingSpinner />}
-                {!loading2 && "Convert"}
-              </div>
-            </span>
-          </button>
+              <span
+                className={` ${
+                  generatedText
+                    ? "transition-all ease-in duration-75 bg-gray-900 rounded-md group-hover:bg-opacity-0 hover:text-gray-800 "
+                    : "transition-all ease-in duration-75 bg-gray-900 rounded-md group-hover:bg-opacity-0"
+                } font-semibold relative px-5 py-2.5 `}
+              >
+                <div
+                  title="Click to generate summary"
+                  className="flex flex-row items-center tracking-wider"
+                >
+                  {loading2 && <LoadingSpinner />}
+                  {!loading2 && "Convert"}
+                </div>
+              </span>
+            </button>
+          </div>
 
-          <div className="relative w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black" title="Summarized text will come here">
+          <div
+            className="relative w-2/5 h-[50vh] border border-fourth p-2 rounded-lg bg-primary bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black"
+            title="Summarized text will come here"
+          >
             {loading2 ? (
               <LoadingDots />
             ) : (
@@ -325,8 +394,8 @@ export default function HomePage() {
                 readOnly
                 value={summarizedText}
               />
-              )}
-              <CopyIcon textToCopy={summarizedText} />
+            )}
+            <CopyIcon textToCopy={summarizedText} />
           </div>
         </div>
       </div>
