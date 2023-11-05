@@ -6,7 +6,7 @@ export default function Logo() {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-8 h-8 "
+      className="lg:w-8 lg:h-8 h-6 w-6 md:w-8 md:h-8 sm:w-8 sm:h-8"
     >
       <defs>
       <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">

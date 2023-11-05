@@ -9,11 +9,10 @@ export default function Header() {
       className="w-full flex flex-col justify-between items-start 
                           h-15 py-3 px-4 flex-grow-1 bg-fifth mt-2"
     >
-      {/* bg-gradient-to-r from-rose-100 to-teal-100 */}
       <div className="flex flex-row">
         <Link to={"/"} className="flex items-center gap-1 ml-2">
           <Logo />
-          <div className="font-bold text-4xl bg-gradient-to-r from-white via-fourth to-fourth text-transparent bg-clip-text whitespace-nowrap tracking-wider">
+          <div className="font-bold text-xl md:text-4xl sm:text-4xl lg:text-4xl  bg-gradient-to-r from-white via-fourth to-fourth text-transparent bg-clip-text whitespace-nowrap tracking-wider">
             Call-Recall
           </div>
         </Link>

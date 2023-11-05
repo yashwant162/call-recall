@@ -4,7 +4,7 @@ import GmailLogo from "../svg/GmailLogo";
 export default function Footer() {
   return (
     <footer className="mt-auto  bg-gradient-to-r from-fourth via-fourth to-white">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-2 text-center pt-2 text-gray-800 lg:text-sm md:text-sm text-xs font-semibold tracking-wider">
+      <div className="grid md:grid-cols-2 sm:grid-cols-1 lg:grid-cols-3 gap-3 pb-2 text-center pt-2 text-gray-800 lg:text-md md:text-md sm:text-md text-base font-semibold tracking-wider">
         <span>&copy; Call-Recall</span>
         <span>Yashwant Singh Rathore</span>
         <span>SKIT, JAIPUR</span>
