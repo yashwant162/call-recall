@@ -1,13 +1,13 @@
 {
-  "type": "service_account",
-  "project_id": "tmpyashwant",
-  "private_key_id": "1036f043593a75c43c17950bf28aa81d84f03bb2",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCXBK65Wz/Qh3Jz\nhwNcawauMJRj5EWQXb2RD1hcuScsL1ojmLM+als0YC5ftJAfGb1PD/ae4ZcmbAlb\nr3gtsVcogjMKOI4Fs2exG90MTsdD7bgLiLWH+8CdCoHXFlz2rbMCoW4bip0yMM2E\ndx5sCORYWk51jie6PCdlqjtKzmuwx6icIbCT/O4cNtQht3Rlg2agrN6lhlEU3TVN\nDOVUCPC9v137U+rbMyGBLu6Px6cPuH8/RbTTwE8XF7ySeGBGgfoaVMXZ9/Y0BwIl\nq+gpvyX2O7znrx7yYl7wBM11WszpNyrAKFj7SzIumBbQtpM7J5/nD05LpMR+KP8P\nMB50z7aXAgMBAAECggEAAqZVSH3mez3jjxpd2Tr5glUdrWw3OkBWAw8RXlZTVSE8\nxCYgP80CIUOhj97tSAmdrdInLuqtyigYHyQCu4G1xUl8V5NEqERZe+nAvnM9aAUD\n3ZPxZEIeQymIu+Gx3nqPiwRffoIEN+BT751fCvptXNpMyR9y6MyFMz5bs8U2belN\nmF5uD+e5po6eApesSwuY6nhEwZue64bmsVcmFX1oXCSR0kJELOxK4A3yXsvDiXAg\noNK2sfZotc/lBk6eByT1U5t3+ZeX0bpP89PINMkYpdHogHczuayCN2iWNocZ0EV7\nvkx0W0zmuTnQfkx+uv85oRxnTI0QLkIaLOD0kKVeNQKBgQDT/qfh48U3j319Wzjc\nYsD3XnwiCICBZmYknL6IYzzPdc5kOkBeT6AAPd5suPK0QgEXBHF12kTqcG3l0E0v\nTN6JhW4eY4uUGvpXubwZ5nuc55CHXmUN5CqbJ2TQdMhdh7EKMc3AMWpAsx9DnU87\nZs5dc1PZ241snHGwmkQyF7hDLQKBgQC2XcEKnKx4FY7vhLB86bGXHcWaM0eMDwlT\n0vXGH69J4IvX+aYeotizm7Fjr5MtQ+rolfxnbm12dOH6PrhDTlRHmn1xrzNdmJu7\nHCOgRmb+HIxey4rl3v2pOGfhl+8KBkqo8SgdX6ZjBD8Gx+B9oi2eXf8WRrw8oJQw\nyN4nt0sLUwKBgQCwQRGjpZPa1don1yg3U4PMJypdwWPWMiTKW+etzZRJiFDI1AWg\nY+NLUCUVj896P0ZYtMEAkzCpGkDEyaLiqK58+ArOCUWLJcLuHOZfQlmT4pMveTPb\nkNA7n00aY34TBTYUm8PM/0iv8j0UIj41zQvWdoRIpVm363o6sofwffgdIQKBgQCl\nPTIK4YdMj4wh7sLTjBRD7s/7NnefqogzEbVsPY1gjTtpCGXC4J8lru7+ejoLC70v\n3acEOQSqDqIrUuU25yRqdMsxVSRfrEV/NrH5KZFssoVl51wFiRWiXN+Tg00uciD4\nDvrgEqj6kwBgrn70lxxqoJTfpFwvOvjLc1YH+obezQKBgHrcQexAgYdneIAzCzgh\nYihPezq+/Dh+SammzB98tnDO9u+GzxZcrkS601zpQHKCJt7hLMpZUJdLhKb+Imhe\n5H5XqfOexbZgM+7TKE9yhomhr+Mm5GdvBVwtVEk/MttkLWCvqqT9iL+TvK12mjwW\nLTBkiOtYO8ifNu+50PYWbd7B\n-----END PRIVATE KEY-----\n",
-  "client_email": "speech-to-text-yashwant@tmpyashwant.iam.gserviceaccount.com",
-  "client_id": "107482170195805089928",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/speech-to-text-yashwant%40tmpyashwant.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
+  "type": "type",
+  "project_id": "project_id",
+  "private_key_id": "private_key_id",
+  "private_key": "private_key",
+  "client_email": "client_email",
+  "client_id": "client_id",
+  "auth_uri": "auth_uri",
+  "token_uri": "token_uri",
+  "auth_provider_x509_cert_url": "auth_provider_x509_cert_url",
+  "client_x509_cert_url": "client_x509_cert_url",
+  "universe_domain": "universe_domain"
 }
